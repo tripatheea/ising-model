@@ -26,7 +26,7 @@ namespace ising {
 			unsigned get_height() ;
 
 			ising::Vertex & get_vertex_at(int x, int y) ;
-			vector<Vertex> get_vertices();
+			vector<Vertex> get_vertices() {
 			string make_string() ;
 
 			float get_energy() ;

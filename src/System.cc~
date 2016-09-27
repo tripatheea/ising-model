@@ -36,7 +36,7 @@ ising::Lattice ising::System::new_random_lattice(ising::Lattice current_lattice)
 void ising::System::step() {
 
 	float new_energy = 0;
-	ising::Lattice new_lattice = new_random_lattice(_current_lattice);
+	ising::Lattice new_lattice;
 
 	// Sweep width * height times.
 	for (unsigned i=0; i < _width * _height; i++) {

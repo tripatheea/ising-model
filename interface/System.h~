@@ -18,7 +18,7 @@ namespace ising {
 	class System {
 
 		public:
-			System(unsigned width, unsigned height, float beta);
+			System(int width, int height, float beta);
 			
 			ising::Lattice get_lattice();
 
@@ -28,8 +28,8 @@ namespace ising {
 			ising::Lattice new_random_lattice(ising::Lattice current_lattice);
 			
 		private:
-			unsigned _width;
-			unsigned _height;
+			int _width;
+			int _height;
 			float _beta;
 			
 			Lattice _current_lattice;

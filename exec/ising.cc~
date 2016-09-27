@@ -11,8 +11,8 @@ using namespace std;
 int main() {
 
 	// Define a new system first. 
-	unsigned width = 50;
-	unsigned height = 50;
+	unsigned width = 10;
+	unsigned height = 10;
 	float beta = 1.;
 	ising::System sys = ising::System(width, height, beta);
 

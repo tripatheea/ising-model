@@ -8,7 +8,7 @@ ising::Lattice::Lattice(unsigned width, unsigned height) : _width(width), _heigh
 	initialize_vertices();
 }
 
-ising::Lattice::Lattice(const ising::Lattice & source) : _width(source.get_width()), _height(source.get_height()), _energy(0.), _vertices(source.get_vertices()) {
+ising::Lattice(const ising::Lattice & source) : _width(source.get_width()), _height(source.get_height()), _energy(0.), _vertices(source.get_vertices()) {
 }
 
 /*
