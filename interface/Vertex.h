@@ -10,13 +10,17 @@ namespace ising {
 
 		public:
 			Vertex(int spin);
+
+			Vertex(const Vertex & source_vertex);	// Copy constructor.
 			
+			
+
 			const int get_spin() const;
 			void flip_spin();
 			
 			std::string make_string();
 
-			friend std::ostream& operator<< (std::ostream&, const Vertex&);
+			friend std::ostream& operator<< (std::ostream&, Vertex&);
 		private:
 			int _spin;
 	};

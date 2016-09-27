@@ -11,24 +11,34 @@
 
 #include "Vertex.h"
 
+using namespace std;
+
 namespace ising {
 	class Lattice {
 
 		public:
-			Lattice(unsigned width, unsigned height, float beta);
+			Lattice(unsigned width, unsigned height);
+
+			Lattice(const Lattice & source_lattice);	// Copy constructor.
+
 			
-			void step();
-			ising::Vertex get_vertex_at(int x, int y);
-			const std::string make_string() const;
+			 unsigned get_width() ;
+			 unsigned get_height() ;
+
+			 ising::Vertex & get_vertex_at(int x, int y) ;
+			 std::string make_string() ;
+
+			 float get_energy() ;
 						
-			friend std::ostream& operator<< (std::ostream&, const Lattice&);
+			friend std::ostream& operator<< (std::ostream&,  Lattice&);
 
 		private:
-			std::vector< std::vector<ising::Vertex> > _vertices;
-			const unsigned _width;
-			const unsigned _height;
-			const float _beta;
+			 std::vector< std::vector<ising::Vertex> > _vertices;
+			 unsigned _width;
+			 unsigned _height;
+			float _energy;
 
+			void calculate_energy();
 			void initialize_vertices();
 	};
 }

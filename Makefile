@@ -7,7 +7,7 @@ BINDIR=bin
 INCDIR=interface
 INC= -I$(INCDIR)
 
-_OBJ = Vertex Lattice
+_OBJ = Vertex Lattice System
 OBJ  = $(patsubst %,$(OBJDIR)/%,$(_OBJ:=.o))
 
 
