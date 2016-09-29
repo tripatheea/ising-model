@@ -1,6 +1,7 @@
 #include "System.h"
 
-ising::System::System(unsigned width, unsigned height, float beta) : _width(width), _height(height), _beta(beta), _current_lattice(ising::Lattice(width, height)) {
+ising::System::System(unsigned width, unsigned height, float beta) : _width(width), _height(height), _beta(beta) {
+	_current_lattice = ising::Lattice(width, height);
 }
 
 ising::Lattice ising::System::get_lattice() {
@@ -36,7 +37,8 @@ ising::Lattice ising::System::new_random_lattice(ising::Lattice current_lattice)
 void ising::System::step() {
 
 	float new_energy = 0;
-	ising::Lattice new_lattice = new_random_lattice(_current_lattice);
+	ising::Lattice current_lattice = ising::Lattice(_current_lattice);
+	ising::Lattice new_lattice = new_random_lattice(current_lattice);
 
 	// Sweep width * height times.
 	for (unsigned i=0; i < _width * _height; i++) {
@@ -48,7 +50,7 @@ void ising::System::step() {
 		new_energy = new_lattice.get_energy();
 
 		//cout << new_lattice << endl;
-		cout << new_energy << ", ";
+		// cout << new_energy << ", ";
 	}
 
 	cout << endl << new_lattice << endl;

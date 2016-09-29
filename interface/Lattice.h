@@ -19,14 +19,14 @@ namespace ising {
 		public:
 			Lattice();
 			Lattice(unsigned width, unsigned height);
-			Lattice(const Lattice & source);
+			Lattice(Lattice & source);
 			
 
 			unsigned get_width() ;
 			unsigned get_height() ;
 
 			ising::Vertex & get_vertex_at(int x, int y) ;
-			vector<Vertex> get_vertices();
+			std::vector< std::vector<ising::Vertex> > get_vertices();
 			string make_string() ;
 
 			float get_energy() ;
