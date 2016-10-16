@@ -8,7 +8,11 @@ ising::Lattice::Lattice(unsigned width, unsigned height) : _width(width), _heigh
 	initialize_vertices();
 }
 
-ising::Lattice::Lattice(ising::Lattice & source) : _width(source.get_width()), _height(source.get_height()), _energy(0.), _vertices(source.get_vertices()) {
+ising::Lattice::Lattice(const ising::Lattice & source) : _width(source.get_width()), _height(source.get_height()), _energy(0.), _vertices(source.get_vertices()) {
+
+}
+
+ising::Lattice::Lattice(std::vector<std::vector<ising::Vertex>> & source_vertices) : _width(source_vertices.size()), _height(source_vertices[0].size()), _vertices(source_vertices){
 
 }
 
@@ -36,19 +40,19 @@ ising::Lattice::Lattice(ising::Lattice & source_lattice) : _width(source_lattice
 }
 */			
 
-unsigned ising::Lattice::get_width() {
+unsigned ising::Lattice::get_width() const {
 	return _width;
 }
 
-std::vector< std::vector<ising::Vertex> > ising::Lattice::get_vertices() {
+std::vector< std::vector<ising::Vertex> > ising::Lattice::get_vertices() const {
 	return _vertices;
 }
 
-unsigned ising::Lattice::get_height() {
+unsigned ising::Lattice::get_height() const {
 	return _height;
 }
 
-ising::Vertex & ising::Lattice::get_vertex_at(int x, int y) {
+const ising::Vertex & ising::Lattice::get_vertex_at(int x, int y) const {
 	return _vertices[x][y];
 }
 
@@ -78,13 +82,13 @@ void ising::Lattice::initialize_vertices() {
 }
 
 
-std::string ising::Lattice::make_string() {
+std::string ising::Lattice::make_string() const {
 	std::ostringstream lattice_string;
 	for (unsigned i=0; i < _width; i++) {
 		for (unsigned j=0; j < _height; j++) {
 			//std::cout << _vertices[i][j] << std::endl;
-			string sigma = (_vertices[i][j].get_spin() == 1) ? "1" : "0";
-			lattice_string << sigma;
+			// string sigma = (_vertices[i][j].get_spin() == 1) ? "1" : "0";
+			lattice_string << _vertices[i][j].make_string();
 		}
 		lattice_string << "\n";
 	}
@@ -95,7 +99,7 @@ std::string ising::Lattice::make_string() {
 }
 
 
-float ising::Lattice::get_energy() {
+float ising::Lattice::get_energy() const {
 	return _energy;
 }
 
@@ -111,6 +115,9 @@ void ising::Lattice::calculate_energy() {
 			// For this vertex, we need to loop through all its neighbors.
 
 			float current_vertex_E = 0;
+			int sigma_x = _vertices[x][y].get_spin();
+
+			cout << "sigma_x = " << sigma_x << endl;
 
 			if (x > 0 and x < (_width - 1)) {
 				

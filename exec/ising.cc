@@ -8,24 +8,29 @@
 
 using namespace std;
 
-int main() {
+int main(int argc, char * argv[]) {
 
 	// Define a new system first. 
-	unsigned width = 50;
-	unsigned height = 50;
+	unsigned width = stoi(argv[1]);
+	unsigned height = stoi(argv[2]);
 	float beta = 1.;
 	ising::System sys = ising::System(width, height, beta);
 
 		
 	ising::Lattice lat = sys.get_lattice();
+		
+	cout << endl << "Old lattice with energy = " << lat.get_energy() << " is: " << endl << lat;
 	
-	cout << lat << endl;
-
-	cout << endl << endl << "========================" << endl << endl;
-	cout << "Energy: " << lat.get_energy() << endl;
-
-
 	sys.step();
+
+	cout << "========================" << endl;
+
+	ising::Lattice new_lattice = sys.get_lattice();
+
+	cout << "New lattice with energy = " << new_lattice.get_energy() << " is: " << endl << new_lattice << endl;
+
+
+	
 	
 
 	return 1;

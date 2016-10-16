@@ -18,7 +18,7 @@ namespace ising {
 			const int get_spin() const;
 			void flip_spin();
 			
-			std::string make_string();
+			std::string make_string() const;
 
 			friend std::ostream& operator<< (std::ostream&, Vertex&);
 		private:

@@ -14,17 +14,23 @@ const int ising::Vertex::get_spin() const {
 }
 
 void ising::Vertex::flip_spin() {
-	_spin = int( ! bool(_spin) );
+	// _spin = int( ! bool(_spin) );
+	if (_spin == -1) {
+		_spin = 1;
+	}
+	else if (_spin == 1) {
+		_spin = -1;
+	}
 }
 
-std::string ising::Vertex::make_string() {
-	return std::to_string(get_spin());	
+std::string ising::Vertex::make_string() const {
+	return (get_spin() == -1) ? "0" : "1";
 }
 
 
 namespace ising {
 	std::ostream& operator<< (std::ostream& os,  Vertex& vertex) {
-		os << std::to_string(vertex.get_spin());
+		os << vertex.make_string();
 		return os;	
 	}
 }

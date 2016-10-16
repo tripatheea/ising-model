@@ -19,17 +19,19 @@ namespace ising {
 		public:
 			Lattice();
 			Lattice(unsigned width, unsigned height);
-			Lattice(Lattice & source);
+			Lattice(const Lattice & source);
+			Lattice(vector<vector<Vertex>> & source_vertices);
 			
 
-			unsigned get_width() ;
-			unsigned get_height() ;
+			unsigned get_width() const;
+			unsigned get_height() const;
 
-			ising::Vertex & get_vertex_at(int x, int y) ;
-			std::vector< std::vector<ising::Vertex> > get_vertices();
-			string make_string() ;
+			const ising::Vertex & get_vertex_at(int x, int y) const;
+			std::vector< std::vector<ising::Vertex> > get_vertices() const;
+			string make_string() const;
 
-			float get_energy() ;
+			void calculate_energy();
+			float get_energy() const;
 						
 			friend std::ostream& operator<< (std::ostream&,  Lattice&);
 
@@ -39,7 +41,6 @@ namespace ising {
 			unsigned _height;
 			float _energy;
 
-			void calculate_energy();
 			void initialize_vertices();
 	};
 }
