@@ -7,6 +7,7 @@
 #include <random>
 #include <sstream>
 #include <string>
+#include <math.h>
 
 #include "Lattice.h"
 #include "Vertex.h"
@@ -32,7 +33,12 @@ namespace ising {
 			unsigned _height;
 			float _beta;
 			
-			Lattice _current_lattice;
+			ising::Lattice _current_lattice;
+
+			float probability_of_lattice(ising::Lattice lattice);
+
+			bool accept_new_lattice(ising::Lattice current_lattice, ising::Lattice new_lattice);
+			
 	};
 }
 

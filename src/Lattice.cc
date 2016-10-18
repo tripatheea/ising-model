@@ -1,19 +1,19 @@
 #include "Lattice.h"
 
 ising::Lattice::Lattice() {
-	cout << "Empty lattice constructor." << endl;
+	// cout << "Empty lattice constructor." << endl;
 }
 
 ising::Lattice::Lattice(unsigned width, unsigned height) : _width(width), _height(height), _energy(0.) {
 	initialize_vertices();
 }
 
-ising::Lattice::Lattice(const ising::Lattice & source) : _width(source.get_width()), _height(source.get_height()), _energy(0.), _vertices(source.get_vertices()) {
+ising::Lattice::Lattice(const ising::Lattice & source) : _width(source.get_width()), _height(source.get_height()), _energy(source.get_energy()), _vertices(source.get_vertices()) {
 
 }
 
 ising::Lattice::Lattice(std::vector<std::vector<ising::Vertex>> & source_vertices) : _width(source_vertices.size()), _height(source_vertices[0].size()), _vertices(source_vertices){
-
+	calculate_energy();
 }
 
 
@@ -38,7 +38,9 @@ ising::Lattice::Lattice(ising::Lattice & source_lattice) : _width(source_lattice
 
 	// calculate_energy();
 }
-*/			
+*/
+
+
 
 unsigned ising::Lattice::get_width() const {
 	return _width;
@@ -116,54 +118,110 @@ void ising::Lattice::calculate_energy() {
 
 			float current_vertex_E = 0;
 			int sigma_x = _vertices[x][y].get_spin();
-
-			cout << "sigma_x = " << sigma_x << endl;
-
+						
 			if (x > 0 and x < (_width - 1)) {
 				
-				current_vertex_E -= J * _vertices[x - 1][y].get_spin();
-				current_vertex_E -= J * _vertices[x + 1][y].get_spin();
+				// The 0.5 factor is because we count each pariwise contribution twice.
+
+				// current_vertex_E += 0.5 * J * sigma_x * _vertices[x - 1][y].get_spin();
+				// current_vertex_E += 0.5 * J * sigma_x * _vertices[x + 1][y].get_spin();
 				
 				if (y > 0 and y < (_height - 1)) {
 					// Not on any boundary.
 					
-					current_vertex_E -= J * _vertices[x][y - 1].get_spin();
-					current_vertex_E -= J * _vertices[x][y + 1].get_spin();
+					current_vertex_E += 0.5 * J * sigma_x * _vertices[x][y - 1].get_spin();
+					current_vertex_E += 0.5 * J * sigma_x * _vertices[x][y + 1].get_spin();
+
+					current_vertex_E += 0.5 * J * sigma_x * _vertices[x - 1][y].get_spin();
+					current_vertex_E += 0.5 * J * sigma_x * _vertices[x + 1][y].get_spin();
 				}
 				else {
 					// On a horizontal boundary so need to use periodic boundary conditions.
 					if (y == 0) {
-						current_vertex_E -= J * _vertices[x][y + 1].get_spin();
-						// Periodic Boundary Condition.
-						current_vertex_E -= J * _vertices[x][_height - 1].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][y + 1].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][_height - 1].get_spin();		// Periodic Boundary Condition.
 					}
 					else if (y == (_height - 1)) {
-						current_vertex_E -= J * _vertices[x][y - 1].get_spin(); 
-						// Periodic Boundary Condition.
-						current_vertex_E -= J * _vertices[x][0].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][y - 1].get_spin(); 
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][0].get_spin();		// Periodic Boundary Condition.
 					}
+
+					current_vertex_E += 0.5 * J * sigma_x * _vertices[x - 1][y].get_spin();
+					current_vertex_E += 0.5 * J * sigma_x * _vertices[x + 1][y].get_spin();
 				}
 			}
 			else {
 				// On a vertical boundary.
-				if (x == 0) {
-					current_vertex_E -= J * _vertices[x + 1][y].get_spin();
-					// Periodic Boundary Condition.
-					current_vertex_E -= J * _vertices[_width - 1][y].get_spin();
+
+				if (x == 0) {	// Vertical + Horizontal Boundary. Left most strip.
+					
+					if (y == 0) { // Upper left corner.
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x + 1][y].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][y + 1].get_spin();	
+
+						// Periodic Boundary Condition.
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[_width - 1][y].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][_height - 1].get_spin();
+					}
+					else if (y == (_height - 1)) { // Lower left corner.
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x + 1][y].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][y - 1].get_spin();	
+
+						// Periodic Boundary Condition.
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[_width - 1][y].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][0].get_spin();		
+					}
+					else {
+						// Left boundary but not on a corner.
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x + 1][y].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][y - 1].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][y + 1].get_spin();
+
+						// PBC.
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[_width - 1][y].get_spin();
+					}
 				}
-				else if (x == (_width - 1)) {
-					current_vertex_E -= J * _vertices[x - 1][y].get_spin(); 
-					// Periodic Boundary Condition.
-					current_vertex_E -= J * _vertices[0][y].get_spin();
+				else if (x == (_width - 1)) {	 // Vertical + Horizontal Boundary. Right most strip.
+
+
+					// current_vertex_E += 0.5 * J * sigma_x * _vertices[x - 1][y].get_spin(); 
+					// current_vertex_E += 0.5 * J * sigma_x * _vertices[x - 1][y].get_spin(); 
+					
+					// // Periodic Boundary Condition.
+					// current_vertex_E += 0.5 * J * sigma_x * _vertices[0][y].get_spin();
+
+					if (y == 0) { // Upper right corner.
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x - 1][y].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][y + 1].get_spin();	
+
+						// Periodic Boundary Condition.
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[0][y].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][_height - 1].get_spin();
+					}
+					else if (y == (_height - 1)) { // Lower right corner.
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x - 1][y].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][y - 1].get_spin();	
+
+						// Periodic Boundary Condition.
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[0][y].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][0].get_spin();		
+					}
+					else {
+						// Right boundary but not on a corner.
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x - 1][y].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][y - 1].get_spin();
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[x][y + 1].get_spin();
+
+						// PBC.
+						current_vertex_E += 0.5 * J * sigma_x * _vertices[0][y].get_spin();
+					}
+
 				}
 			}
 
 			E += current_vertex_E;
 		}
 	}
-
-		
-
 
 	_energy = E;
 }

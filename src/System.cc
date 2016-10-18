@@ -8,6 +8,10 @@ ising::Lattice ising::System::get_lattice() {
 	return _current_lattice;
 }
 
+float ising::System::probability_of_lattice(ising::Lattice lattice) {
+	return exp( - _beta * lattice.get_energy() );
+}
+
 ising::Lattice ising::System::new_random_lattice(ising::Lattice current_lattice) {
 	// TODO: Maybe accept a parameter about how to select a new lattice.
 
@@ -56,15 +60,55 @@ ising::Lattice ising::System::new_random_lattice(ising::Lattice current_lattice)
 	return new_lattice;
 }
 
+bool ising::System::accept_new_lattice(ising::Lattice current_lattice, ising::Lattice new_lattice) {
+	// Now, calculate the (non-normalized) probabilities of getting our current and new lattice.
+	float p_current_lattice = probability_of_lattice(current_lattice);
+	float p_new_lattice = probability_of_lattice(new_lattice);
+
+	float alpha = p_new_lattice / p_current_lattice;
+
+	if (alpha >= 1) {
+		cout << "Moving to a new lattice as it has less energy: " << current_lattice.get_energy() << " vs. " << new_lattice.get_energy() << endl;
+		return true;	// This is because, if alpha >= 1, P(new) >= P(current) so it's preferrable to continue with this transition.
+	}
+	else {
+		// Accept wth probablity alpha.
+
+		// To do that, generate a random number 1 to 1e25.
+		std::mt19937 rng;
+		rng.seed(std::random_device()());
+		std::uniform_int_distribution<std::mt19937::result_type> random_distribution(1, 1e25); // distribution in range [0, width - 1].
+		float random_number = random_distribution(rng);
+
+		cout << "Got the random number " << random_number << " vs. " << (alpha * 1e25) << endl;
+		// Then, if the number is between 1 and int(alpha * 1e5), then accept the transition.
+		if (random_number <= round(alpha * 1e25)) {
+			cout << "Moving to a new lattice even though it has more energy: " << current_lattice.get_energy() << " vs. " << new_lattice.get_energy() << endl;
+			return true;
+		}
+	}
+
+	// cout << "Staying with the current lattice." << endl;
+
+	return false;
+}
+
+
 void ising::System::step() {
 
-	float new_energy = 0;
+	
 	ising::Lattice current_lattice = ising::Lattice(_current_lattice);
+
+	// Do a sweep with width x height new random lattices before proceeding so that all the spins have a chance to flip.
+
 	ising::Lattice new_lattice = new_random_lattice(current_lattice);
 
-	// cout << "Lattice is: " << endl;
-	// cout << new_lattice << endl;
+	for (unsigned i=0; i < _width * _height; i++) {
+		new_lattice = new_random_lattice(new_lattice);
+	}
+	
 
+	
 	// Sweep width * height times.
 	for (unsigned i=0; i < _width * _height; i++) {
 	// for (unsigned i=0; i < 0; i++) {
@@ -73,29 +117,14 @@ void ising::System::step() {
 		new_lattice = new_random_lattice(new_lattice);
 	}
 
-	// cout << "Final lattice is: " << endl;
-	// cout << new_lattice << endl;
-
-	/*
-	ising::Vertex a = ising::Vertex(0);
-	ising::Vertex b = ising::Vertex(1);
-	ising::Vertex c = ising::Vertex(0);
-	ising::Vertex d = ising::Vertex(0);
-
-	std::vector<std::vector<ising::Vertex>> all_vertices{{ising::Vertex(a), ising::Vertex(b)}, {ising::Vertex(c), ising::Vertex(d)}};
-
-	cout << endl << all_vertices[0][0] << all_vertices[0][1] << endl << all_vertices[1][0] << all_vertices[1][1] << endl;
-
-	ising::Lattice hey_lattice = ising::Lattice(all_vertices);
-
-	cout << endl << hey_lattice << endl;
-	*/
+	if (accept_new_lattice(current_lattice, new_lattice)) {
+		_current_lattice = new_lattice;
+		// cout << "Moving to new lattice." << endl;
+	}
+	else {
+		// cout << "Staying with current lattice." << endl;
+		// step();
+	}
 	
-	_current_lattice = new_lattice;
 
-	// cout << endl << new_lattice << endl;
-	// cout << "New Energy: " << new_energy << endl;
-
-	// cout << "Current lattice is:" << endl;
-	// cout << _current_lattice << endl;
 }

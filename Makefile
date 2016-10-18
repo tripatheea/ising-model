@@ -11,7 +11,7 @@ _OBJ = Vertex Lattice System
 OBJ  = $(patsubst %,$(OBJDIR)/%,$(_OBJ:=.o))
 
 
-_EXEC=ising
+_EXEC=lattice_plots energy
 EXEC=$(patsubst %,$(EXECDIR)/%,$(_EXEC:=.o))
 BIN=$(patsubst %,$(BINDIR)/%,$(_EXEC))
 
@@ -19,13 +19,13 @@ BIN=$(patsubst %,$(BINDIR)/%,$(_EXEC))
 all: $(BIN)
 
 $(OBJDIR)/%.o : $(OBJDIR)/%.cc
-	$(CXX) -c -o $@ $< $(CXXFLAGS) $(INC)
+	$(CXX) -I/usr/include/python2.7 -c -o $@ $< $(CXXFLAGS) $(INC) -lpython2.7 
 
 $(EXECDIR)/%.o : $(EXECDIR)/%.cc
-	$(CXX) -c -o $@ $< $(CXXFLAGS) $(INC)
+	$(CXX) -I/usr/include/python2.7 -c -o $@ $< $(CXXFLAGS) $(INC) -lpython2.7 
 	
 $(BINDIR)/% : $(EXECDIR)/%.o $(OBJ)
-	$(CXX) $< $(OBJ) -o $@ $(CXXFLAGS) 
+	$(CXX) -I/usr/include/python2.7 $< $(OBJ) -o $@ $(CXXFLAGS) -lpython2.7
 
 .PHONY: clean
 .PRECIOUS: $(OBJ) $(EXEC)
