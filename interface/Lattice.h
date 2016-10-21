@@ -35,7 +35,9 @@ namespace ising {
 			void calculate_energy();
 			float get_energy() const;
 			void set_energy(float energy);
-						
+			
+			int get_random_number(int lower_limit, int upper_limit);
+
 			friend std::ostream& operator<< (std::ostream&,  Lattice&);
 
 		private:

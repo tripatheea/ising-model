@@ -40,19 +40,22 @@ void ising::Lattice::replace_vertex_at(int x, int y, Vertex v) {
 	_vertices[x][y] = v;
 }
 
+
+int ising::Lattice::get_random_number(int lower_limit, int upper_limit) {
+	std::mt19937 rng;
+	rng.seed(std::random_device()());
+	std::uniform_int_distribution<std::mt19937::result_type> x_dist(lower_limit, upper_limit); 
+	return x_dist(rng);
+}
+
+
 void ising::Lattice::initialize_vertices() {
 
 	for (unsigned i=0; i < _width; i++) {
 		std::vector<ising::Vertex> row;
 		for (unsigned j=0; j < _height; j++) {
 			// Generate a random spin (0 or 1).
-			int spin;			
-	
-			std::mt19937 rng;
-			rng.seed(std::random_device()());
-			std::uniform_int_distribution<std::mt19937::result_type> dist6(0,9); // distribution in range [1, 6]
-			
-			spin = (dist6(rng) <= 5) ? -1 : +1;
+			int spin = 2 * get_random_number(0, 1) - 1;
 			row.push_back(Vertex(spin));
 		}
 

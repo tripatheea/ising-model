@@ -7,3 +7,5 @@ plots/*.avi
 plots/*.pdf
 plots/lattice
 data/*
+*.*~
+*.o
