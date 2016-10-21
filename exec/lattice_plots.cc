@@ -29,6 +29,8 @@ int main(int argc, char * argv[]) {
 	// Define a new system first. 
 	unsigned width = stoi(argv[1]);
 	unsigned height = stoi(argv[2]);
+	unsigned steps = stoi(argv[3]);
+
 	float beta = 1.;
 	ising::System sys = ising::System(width, height, beta);
 	
@@ -37,34 +39,28 @@ int main(int argc, char * argv[]) {
 			
 	ising::Lattice lat = sys.get_lattice();
 
-	cout << "Initial Lattice: " << endl << lat << endl;
-	sys.stabilize(1000);
+	// cout << "Initial Lattice: " << endl << lat << endl;
+	sys.stabilize(500);
 
-	
-	unsigned max_i = 100000;
-	for (unsigned i=0; i < max_i; i++) {
+	for (unsigned i=0; i < steps; i++) {
 
-		if ((i % (max_i / 10)) == 0) {
-			// cout << "Step #" << (i + 1) << endl;
-			cout << sys.get_lattice().get_energy() << endl;
-		}
+		if ((i % 100) == 0)
+			cout << "Step #" << (i + 1) << endl;
 		
-		sys.step();
+		sys.mc_update(1);
 
-		// write_to_file(sys.get_lattice());
+		// cout << sys.get_lattice() << endl;
 
-		// stringstream plotting_command;
-		// plotting_command << "python python/plot.py " << width << " " << height << " " << i << " " << fixed << setprecision(2) << sys.get_lattice().get_energy();
+		write_to_file(sys.get_lattice());
 
-		// system( plotting_command.str().c_str() );
+		stringstream plotting_command;
+		plotting_command << "python python/plot.py " << width << " " << height << " " << i << " " << fixed << setprecision(2) << sys.get_lattice().get_energy();
+		system( plotting_command.str().c_str() );
 	}
 
-	// system("ffmpeg -start_number 0 -framerate 25  -r 4 -y -i plots/lattice/%d.png -vcodec mpeg4 plots/lattice/animation.avi");
+	system("ffmpeg -start_number 0 -framerate 25  -r 4 -y -i plots/lattice/%d.png -vcodec mpeg4 plots/lattice/animation.avi");
 	// // The -r 3 option sets the framerate of the resulting video to 3 frames per second so that I can see each still for a short period of time.
 
-	
-	lat = sys.get_lattice();
-	cout << "Final Lattice: " << endl << lat << endl;
 
 	return 1;
 
@@ -72,7 +68,7 @@ int main(int argc, char * argv[]) {
 
 
 void write_to_file(ising::Lattice lat) {
-	ofstream output_file("lattice.dat", ios::out);
+	ofstream output_file("data/lattice.dat", ios::out);
 
 
 	std::vector<std::vector<ising::Vertex> > vertices = lat.get_vertices();

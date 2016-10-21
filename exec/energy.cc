@@ -101,10 +101,10 @@ void calculate_heat_capacities(vector<float> & all_heat_capacities, vector<float
 
 void write_heat_capacities(ofstream & output_file, vector<float> all_heat_capacities, vector<float> all_temps) {
 	for (unsigned i=0; i < all_temps.size(); i++) {
-		output_file << fixed << setprecision(2) << all_temps[i] << "\t" << setprecision(8) << all_heat_capacities[i] << endl;
+		output_file << all_temps[i] << "\t" << all_heat_capacities[i] << endl;
 	}
 }
 
 void write_energies(ofstream & output_file, float temp, float energy) {
-	output_file << fixed << setprecision(2) << temp << "\t" << setprecision(8) << energy << endl;
+	output_file << temp << "\t" << energy << endl;
 }

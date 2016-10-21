@@ -43,7 +43,7 @@ def plot():
 	
 
 	# plt.imshow(lattice, origin='upper', extent=[0, width - 1, 0, height - 1])
-	im = plt.imshow(lattice, origin='upper', extent=[0, width - 1, 0, height - 1], cmap='Blues')
+	im = plt.imshow(lattice, origin='upper', extent=[0, width - 1, 0, height - 1], cmap='Blues', vmin=-1, vmax=1)
 
 	cb = plt.colorbar(im)
 

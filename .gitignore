@@ -6,3 +6,4 @@ plots/*.png
 plots/*.avi
 plots/*.pdf
 plots/lattice
+data/*
