@@ -17,10 +17,10 @@ from mpl_toolkits.mplot3d import axes3d
 from matplotlib import cm
 
 
-width = 5
-height = 5
-serial_number = int(sys.argv[1])
-energy = float(sys.argv[2])
+width = int(sys.argv[1])
+height = int(sys.argv[2])
+serial_number = int(sys.argv[3])
+energy = float(sys.argv[4])
 
 
 
@@ -53,11 +53,17 @@ def plot():
 	plt.xlabel("x")
 	plt.ylabel("y", rotation=0)
 
-
+	label = []
 	extra = Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)
+	label.extend( ["{} x {}".format(width, height)] ) 
+	additional_legend = plt.gca().legend( [extra] * len(label), label, frameon=0, borderpad=0, fontsize=20, bbox_transform = plt.gcf().transFigure, bbox_to_anchor=[0.1, 0.98], loc="upper left")	
+	plt.gca().add_artist(additional_legend)
+
+
+
 	label = []
 	label.extend( ["N = {}; E = {}".format(serial_number, energy)] ) 
-	additional_legend = plt.gca().legend( [extra] * len(label), label, frameon=0, borderpad=0, fontsize=20, bbox_transform = plt.gcf().transFigure, bbox_to_anchor=[0.10, 0.98], loc="upper left")	
+	additional_legend = plt.gca().legend( [extra] * len(label), label, frameon=0, borderpad=0, fontsize=20, bbox_transform = plt.gcf().transFigure, bbox_to_anchor=[0.83, 0.98], loc="upper right")	
 	plt.gca().add_artist(additional_legend)
 
 

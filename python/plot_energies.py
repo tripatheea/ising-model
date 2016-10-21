@@ -33,7 +33,7 @@ mpl.rcParams['text.latex.preamble'] = [r'\boldmath']
 plt.rc('font', family='serif', size=43)
 
 def parse_file():
-	beta_s = []
+	temp_s = []
 	energies = []
 	with open("data/energy.dat") as f:
 		lines = f.readlines()
@@ -42,20 +42,20 @@ def parse_file():
 			row = []
 			blocks = line.strip().split("\t")
 			
-			beta_s.append(float(blocks[0]))
+			temp_s.append(float(blocks[0]))
 			energies.append(float(blocks[1]))
 
-	return (beta_s, energies)
+	return (temp_s, energies)
 
 
 def plot():
-	beta_s, energies = parse_file()
-	
-	plt.plot(beta_s, energies, lw=5, color="red")	
+	temp_s, energies = parse_file()
+
+	plt.plot(temp_s, energies, lw=0, color="red", marker='+', markersize=40, pickradius=30, alpha=1.0)	
 
 	plt.autoscale()
 
-	plt.xlabel(r"$\beta$", fontsize=55, labelpad=25)
+	plt.xlabel("Temperature (T)", fontsize=55, labelpad=25)
 	plt.ylabel("Internal Energy $(U)$", fontsize=55)
 
 	plt.tick_params(which='major', width=5, length=25, labelsize=50)
@@ -63,11 +63,12 @@ def plot():
 
 	plt.title("Internal Energy of a {} x {} lattice with {} steps".format(width, height, N))
 
+
 	plt.gcf().set_size_inches(30, 24, forward=1)
 
 	# plt.savefig("plots/" + str(serial_number) + ".png")
 	plt.savefig("plots/energy.pdf")
-
+	# plt.show()
 
 
 plot()

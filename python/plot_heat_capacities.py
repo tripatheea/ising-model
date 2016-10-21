@@ -19,7 +19,15 @@ from matplotlib import cm
 
 width = int(sys.argv[1])
 height = int(sys.argv[2])
+N = int(sys.argv[3])
 
+
+mpl.rcParams['axes.linewidth'] = 5.0 #set the value globally
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['text.latex.preamble']=[r"\usepackage{amsmath}"]
+mpl.rcParams['text.latex.preamble'] = [r'\boldmath']
+
+plt.rc('font', family='serif', size=43)
 
 def parse_file():
 	beta_s = []
@@ -40,18 +48,19 @@ def parse_file():
 def plot():
 	beta_s, heat_capacities = parse_file()
 
-	plt.plot(beta_s, heat_capacities, lw=3, color="red")	
+	plt.plot(beta_s, heat_capacities, lw=0, color="red", marker='+', markersize=25, pickradius=15, alpha=1.0)
 
-	plt.autoscale()
+	plt.xlabel("Temperature", fontsize=55, labelpad=25)
+	plt.ylabel("Heat Capacity $(C)$", fontsize=55)
 
-	plt.xlabel("B")
-	plt.ylabel("C", rotation=0)
+	plt.tick_params(which='major', width=5, length=25, labelsize=50)
+	plt.tick_params(which='minor', width=3, length=15)
 
-	plt.title("Heat capacity for a {} x {} lattice".format(width, height))
+	plt.title("Heat Capacity for a {} x {} lattice with {} steps.".format(width, height, N))
 
-	# plt.savefig("plots/" + str(serial_number) + ".png")
-	plt.savefig("plots/heat_capacity.png")
+	plt.gcf().set_size_inches(30, 24, forward=1)
 
+	plt.savefig("plots/heat_capacity.pdf")
 
 
 plot()

@@ -31,33 +31,40 @@ int main(int argc, char * argv[]) {
 	unsigned height = stoi(argv[2]);
 	float beta = 1.;
 	ising::System sys = ising::System(width, height, beta);
+	
 
-		
+	// cout << sys.get_lattice() << endl;
+			
 	ising::Lattice lat = sys.get_lattice();
 
-	unsigned max_i = 100;
+	cout << "Initial Lattice: " << endl << lat << endl;
+	sys.stabilize(1000);
+
+	
+	unsigned max_i = 100000;
 	for (unsigned i=0; i < max_i; i++) {
 
-		if ((i % (max_i / 10)) == 0)
-			cout << "Step #" << (i + 1) << endl;
+		if ((i % (max_i / 10)) == 0) {
+			// cout << "Step #" << (i + 1) << endl;
+			cout << sys.get_lattice().get_energy() << endl;
+		}
 		
 		sys.step();
 
-		write_to_file(sys.get_lattice());
+		// write_to_file(sys.get_lattice());
 
-		stringstream plotting_command;
-		plotting_command << "python plots/plot.py " << width << " " << height << " " << i << " " << fixed << setprecision(2) << sys.get_lattice().get_energy();
+		// stringstream plotting_command;
+		// plotting_command << "python python/plot.py " << width << " " << height << " " << i << " " << fixed << setprecision(2) << sys.get_lattice().get_energy();
 
-		// cout << plotting_command << endl;
-		system( plotting_command.str().c_str() );
+		// system( plotting_command.str().c_str() );
 	}
 
-	// system("convert -delay 40 -loop 0 plots/*.png plots/animation.gif");
-	system("ffmpeg -start_number 0 -framerate 25  -r 4 -y -i plots/lattice/%d.png -vcodec mpeg4 plots/lattice/animation.avi");
-	// The -r 3 option sets the framerate of the resulting video to 3 frames per second so that I can see each still for a short period of time.
+	// system("ffmpeg -start_number 0 -framerate 25  -r 4 -y -i plots/lattice/%d.png -vcodec mpeg4 plots/lattice/animation.avi");
+	// // The -r 3 option sets the framerate of the resulting video to 3 frames per second so that I can see each still for a short period of time.
 
 	
-	
+	lat = sys.get_lattice();
+	cout << "Final Lattice: " << endl << lat << endl;
 
 	return 1;
 

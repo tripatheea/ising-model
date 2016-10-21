@@ -19,17 +19,14 @@
 #include <limits>
 #include <chrono>
 
-
 using namespace std;
 
-void write_to_file(ising::Lattice lat);
 
-void write_energies(ofstream & output_file, float beta, float energy);
-void write_heat_capacities(ofstream & output_file, vector<float> all_heat_capacities, vector<float> all_betas);
-void mc_update_system(ising::System & sys, int iteration);
+void calculate_heat_capacities(vector<float> & all_heat_capacities, vector<float> & all_temps, vector<float> & all_energies);
+
+void write_energies(ofstream & output_file, float temp, float energy);
+void write_heat_capacities(ofstream & output_file, vector<float> all_heat_capacities, vector<float> all_temps);
 void write_lattice(ofstream & output_file, ising::Lattice lat);
-
-void calculate_heat_capacities(vector<float> & all_heat_capacities, vector<float> & all_betas, vector<float> & all_energies);
 
 int main(int argc, char * argv[]) {
 
@@ -38,46 +35,45 @@ int main(int argc, char * argv[]) {
 	unsigned height = stoi(argv[2]);
 	unsigned steps = stoi(argv[3]);
 
-	vector<float> all_betas;
+	vector<float> all_temps;
 	vector<float> all_energies;
 
-	ofstream output_file("data/energy.dat", ios::out);
+	ofstream energies_output_file("data/energy.dat", ios::out);
+	ofstream heat_capacities_output_file("data/heat_capacities.dat", ios::out);
 
-
-	float beta = 1.0;
+	float temp = 1;
 	float energy;
-	for (unsigned i=0; beta < 3.0; i++) {
+	for (unsigned i=0; temp <= 4.0; i++) {
 
-		cout << "Working with beta = " << beta << endl;
+		// if ((int(temp * 100) % 5) == 0) 
+			// cout << endl << "========================================" << endl << endl << "Working with temp = " << temp << endl;
 
+		float beta = 1 / temp;
 		ising::System sys = ising::System(width, height, beta);
-		mc_update_system(sys, steps);
+		sys.stabilize(500);
+		sys.mc_update(steps);
 		
-		ofstream lattice_output(("data/lattice/5x5_1M/" + to_string(i) + ".dat").c_str());
-		write_lattice(lattice_output, sys.get_lattice());
-
-
 		energy = sys.get_lattice().get_energy();
 		
-		all_betas.push_back(beta);
+		all_temps.push_back(temp);
 		all_energies.push_back(energy);
 		
-		write_energies(output_file, beta, energy);
+		write_energies(energies_output_file, temp, energy);
 
-		beta += 0.02;
-
-
+		temp += 0.01;
 	}
 
-	// vector<float> all_heat_capacities;
-	// calculate_heat_capacities(all_heat_capacities, all_betas, all_energies);
-	// write_heat_capacities(output_file, all_heat_capacities, all_betas);
+	vector<float> all_heat_capacities;
+	calculate_heat_capacities(all_heat_capacities, all_temps, all_energies);
+	write_heat_capacities(heat_capacities_output_file, all_heat_capacities, all_temps);
 
 
 	stringstream plotting_command;
 	plotting_command << "python python/plot_energies.py " << width << " " << height << " " << steps;
-
-	// cout << plotting_command << endl;
+	system( plotting_command.str().c_str() );
+	
+	plotting_command.str("");
+	plotting_command << "python python/plot_heat_capacities.py " << width << " " << height << " " << steps;
 	system( plotting_command.str().c_str() );
 
 
@@ -85,48 +81,30 @@ int main(int argc, char * argv[]) {
 }
 
 
+
+
 void write_lattice(ofstream & output_file, ising::Lattice lat) {
 	output_file << lat;
 }
 
-void calculate_heat_capacities(vector<float> & all_heat_capacities, vector<float> & all_betas, vector<float> & all_energies) {
+void calculate_heat_capacities(vector<float> & all_heat_capacities, vector<float> & all_temps, vector<float> & all_energies) {
 	// Find the x granulity first.
-	float delta_B = all_betas[1] - all_betas[0];
+	float delta_T = all_temps[1] - all_temps[0];
 	
 	all_heat_capacities.push_back(0);
-	for (unsigned i=1; i < all_betas.size(); i++) {
-		all_heat_capacities.push_back((all_energies[i + 1] - all_energies[i]) / delta_B);
+	for (unsigned i=1; i < all_temps.size(); i++) {
+		all_heat_capacities.push_back((all_energies[i + 1] - all_energies[i]) / delta_T);
 	}	
 }
 
-void mc_update_system(ising::System & sys, int iteration) {
-	for (unsigned i=0; i < iteration; i++) {		
-		sys.step();
+
+
+void write_heat_capacities(ofstream & output_file, vector<float> all_heat_capacities, vector<float> all_temps) {
+	for (unsigned i=0; i < all_temps.size(); i++) {
+		output_file << fixed << setprecision(2) << all_temps[i] << "\t" << setprecision(8) << all_heat_capacities[i] << endl;
 	}
 }
 
-
-void write_heat_capacities(ofstream & output_file, vector<float> all_heat_capacities, vector<float> all_betas) {
-	for (unsigned i=0; i < all_betas.size(); i++) {
-		output_file << fixed << setprecision(2) << all_betas[i] << "\t" << all_heat_capacities[i] << endl;
-	}
-}
-
-void write_energies(ofstream & output_file, float beta, float energy) {
-	output_file << fixed << setprecision(2) << beta << "\t" << energy << endl;
-}
-
-void write_to_file(ising::Lattice lat) {
-	ofstream output_file("data/lattice.dat", ios::out);
-
-
-	std::vector<std::vector<ising::Vertex> > vertices = lat.get_vertices();
-
-	for (unsigned x=0; x < vertices.size(); x++) {
-		for (unsigned y=0; y < vertices[x].size(); y++) {
-			output_file << showpos << to_string(vertices[x][y].get_spin()) + "\t";
-		}
-		output_file << "\n";
-	}
-
+void write_energies(ofstream & output_file, float temp, float energy) {
+	output_file << fixed << setprecision(2) << temp << "\t" << setprecision(8) << energy << endl;
 }

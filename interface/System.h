@@ -21,12 +21,16 @@ namespace ising {
 		public:
 			System(unsigned width, unsigned height, float beta);
 			
-			ising::Lattice get_lattice();
+			ising::Lattice & get_lattice();
 
+			void stabilize(int steps);
 			void step();
 
+			int get_random_number(int lower_limit, int upper_limit);
 
-			ising::Lattice new_random_lattice(ising::Lattice current_lattice);
+			void mc_update(int number_of_iterations);
+			
+			int positive_modulo(int i, int n);
 			
 		private:
 			unsigned _width;

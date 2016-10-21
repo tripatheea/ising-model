@@ -14,13 +14,7 @@ const int ising::Vertex::get_spin() const {
 }
 
 void ising::Vertex::flip_spin() {
-	// _spin = int( ! bool(_spin) );
-	if (_spin == -1) {
-		_spin = 1;
-	}
-	else if (_spin == 1) {
-		_spin = -1;
-	}
+	_spin *= -1;
 }
 
 std::string ising::Vertex::make_string() const {

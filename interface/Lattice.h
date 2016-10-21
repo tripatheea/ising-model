@@ -27,11 +27,14 @@ namespace ising {
 			unsigned get_height() const;
 
 			const ising::Vertex & get_vertex_at(int x, int y) const;
+			void replace_vertex_at(int x, int y, Vertex v);
+
 			std::vector< std::vector<ising::Vertex> > get_vertices() const;
 			string make_string() const;
 
 			void calculate_energy();
 			float get_energy() const;
+			void set_energy(float energy);
 						
 			friend std::ostream& operator<< (std::ostream&,  Lattice&);
 
