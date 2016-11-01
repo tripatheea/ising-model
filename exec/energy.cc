@@ -41,8 +41,9 @@ int main(int argc, char * argv[]) {
 	ofstream energies_output_file("data/energy.dat", ios::out);
 	ofstream heat_capacities_output_file("data/heat_capacities.dat", ios::out);
 
-	float temp = 1;
+	float temp = 0.0;
 	float energy;
+	// for (unsigned i=0; temp <= 1.0; i++) {
 	for (unsigned i=0; temp <= 4.0; i++) {
 
 		// if ((int(temp * 100) % 5) == 0) 
@@ -50,17 +51,22 @@ int main(int argc, char * argv[]) {
 
 		float beta = 1 / temp;
 		ising::System sys = ising::System(width, height, beta);
-		sys.stabilize(500);
+		sys.stabilize(5000);
 		sys.mc_update(steps);
 		
+
+		// cout << "For the following lattice, I got E = " << sys.get_lattice().get_energy() << endl;
+		// cout << sys.get_lattice() << endl;
 		energy = sys.get_lattice().get_energy();
+
+		// cout << "Energy according to energy is: " << energy << endl;
 		
 		all_temps.push_back(temp);
 		all_energies.push_back(energy);
 		
 		write_energies(energies_output_file, temp, energy);
 
-		temp += 0.01;
+		temp += 0.5;
 	}
 
 	vector<float> all_heat_capacities;

@@ -94,9 +94,11 @@ void ising::Lattice::set_energy(float energy) {
 
 void ising::Lattice::calculate_energy() {
 	
+	// cout << "I'm about to calculate the energy." << endl;
+
 	float J = 1.0;
 
-	float E = 0;
+	double E = 0;
 	
 	for (unsigned x=0; x < _width; x++) {
 		for (unsigned y=0; y < _height; y++) {
@@ -111,8 +113,8 @@ void ising::Lattice::calculate_energy() {
 			E += - neighbors * current_spin;
 		}
 	}
-
-	_energy = 0.25 * E / (_width * _height);
+	
+	_energy = 0.25 * E;
 
 	// cout << "E = " << _energy << endl;
 }

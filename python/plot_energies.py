@@ -55,6 +55,8 @@ def plot():
 
 	plt.autoscale()
 
+	plt.gca().set_ylim( plt.gca().get_ylim()[0] * 1.25, plt.gca().get_ylim()[1] )
+
 	plt.xlabel("Temperature (T)", fontsize=55, labelpad=25)
 	plt.ylabel("Internal Energy $(U)$", fontsize=55)
 

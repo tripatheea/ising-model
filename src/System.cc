@@ -42,10 +42,23 @@ void ising::System::mc_update(int number_of_iterations) {
 		// 	cout << "Step #" << i << endl;
 		
 		step();
-		energy += _current_lattice.get_energy();
+		// energy = energy + _current_lattice.get_energy();
+
+		// _current_lattice.set_energy(energy / (number_of_iterations * _width * _height));
+
+		// cout << "Got " << _current_lattice.get_energy() / (number_of_iterations * _width * _height) << endl;
+		_current_lattice.set_energy(_current_lattice.get_energy() / (number_of_iterations * _width * _height));
+		// _current_lattice.set_energy(_current_lattice.get_energy());
+
+		// cout << _current_lattice << endl;
+		// cout << _current_lattice.get_energy() << endl;
+
 		// cout << "Here it is " << _current_lattice.get_energy() << endl;
 	}
-	_current_lattice.set_energy(energy / number_of_iterations);
+
+	// cout << "Energy according to system is: " << (energy / number_of_iterations) << endl;
+
+	
 
 	// cout << "==========================" << endl;
 }
@@ -79,12 +92,15 @@ void ising::System::step() {
 			// cout << current_vertex.get_spin() << endl;
 			// lat.replace_vertex_at(x, y, Vertex(current_vertex));
 			_current_lattice.replace_vertex_at(x, y, Vertex(current_vertex));
-
+			
 			// _current_lattice = ising::Lattice(lat);
-			_current_lattice.calculate_energy();
 
 			// cout << "Updated spin: " << _current_lattice.get_vertices()[x][y].get_spin() << endl;
 
 		}
 	}
+
+	_current_lattice.calculate_energy();
+
+
 }
