@@ -40,8 +40,9 @@ int main(int argc, char * argv[]) {
 
 	ofstream energies_output_file("data/energy.dat", ios::out);
 	ofstream heat_capacities_output_file("data/heat_capacities.dat", ios::out);
-
-	float temp = 0.0;
+	ofstream file("temp.dat", ios::out);
+	
+	float temp = 1.0;
 	float energy;
 	// for (unsigned i=0; temp <= 1.0; i++) {
 	for (unsigned i=0; temp <= 4.0; i++) {
@@ -51,7 +52,7 @@ int main(int argc, char * argv[]) {
 
 		float beta = 1 / temp;
 		ising::System sys = ising::System(width, height, beta);
-		sys.stabilize(5000);
+		sys.stabilize(1000);
 		sys.mc_update(steps);
 		
 

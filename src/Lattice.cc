@@ -64,6 +64,10 @@ void ising::Lattice::initialize_vertices() {
 		row.clear();
 		row.shrink_to_fit();
 	}
+
+	// _vertices = vector<vector<Vertex>>{ {1, 1, 1, 1, 1}, {1, -1, 1, 1, 1}, {1, 1, 1, 1, 1}, {1, 1, 1, 1, 1}, {1, 1, 1, 1, 1} };
+
+
 }
 
 

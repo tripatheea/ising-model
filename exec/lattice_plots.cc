@@ -31,7 +31,7 @@ int main(int argc, char * argv[]) {
 	unsigned height = stoi(argv[2]);
 	unsigned steps = stoi(argv[3]);
 
-	float beta = 1.;
+	float beta = 0.1;
 	ising::System sys = ising::System(width, height, beta);
 	
 
@@ -39,8 +39,15 @@ int main(int argc, char * argv[]) {
 			
 	ising::Lattice lat = sys.get_lattice();
 
-	// cout << "Initial Lattice: " << endl << lat << endl;
-	sys.stabilize(500);
+	write_to_file(sys.get_lattice());
+
+		stringstream plotting_command;
+		plotting_command << "python python/plot.py " << width << " " << height << " -1 " << fixed << setprecision(2) << sys.get_lattice().get_energy();
+		system( plotting_command.str().c_str() );
+	
+
+	// cout << "Initial /Lattice: " << endl << lat << endl;
+	// sys.stabilize(500);
 
 	for (unsigned i=0; i < steps; i++) {
 
@@ -58,8 +65,8 @@ int main(int argc, char * argv[]) {
 		system( plotting_command.str().c_str() );
 	}
 
-	system("ffmpeg -start_number 0 -framerate 25  -r 4 -y -i plots/lattice/%d.png -vcodec mpeg4 plots/lattice/animation.avi");
-	// // The -r 3 option sets the framerate of the resulting video to 3 frames per second so that I can see each still for a short period of time.
+	// system("ffmpeg -start_number 0 -framerate 25  -r 4 -y -i plots/lattice/%d.png -vcodec mpeg4 plots/lattice/animation.avi");
+	// // // The -r 3 option sets the framerate of the resulting video to 3 frames per second so that I can see each still for a short period of time.
 
 
 	return 1;

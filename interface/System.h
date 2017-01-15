@@ -8,6 +8,8 @@
 #include <sstream>
 #include <string>
 #include <math.h>
+#include <sstream>
+#include <fstream>
 
 #include "Lattice.h"
 #include "Vertex.h"

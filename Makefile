@@ -1,5 +1,6 @@
 CXX = g++
-CXXFLAGS= -O3 -Wall -Woverloaded-virtual -g -std=c++11
+# CXXFLAGS= -O3 -Wall -Woverloaded-virtual -g -std=c++11
+CXXFLAGS= -O0 -g -ggdb -Wall -Woverloaded-virtual -g -std=c++11
 
 OBJDIR=src
 EXECDIR=exec
@@ -11,7 +12,7 @@ _OBJ = Vertex Lattice System
 OBJ  = $(patsubst %,$(OBJDIR)/%,$(_OBJ:=.o))
 
 
-_EXEC=lattice_plots energy
+_EXEC=test
 EXEC=$(patsubst %,$(EXECDIR)/%,$(_EXEC:=.o))
 BIN=$(patsubst %,$(BINDIR)/%,$(_EXEC))
 

@@ -36,18 +36,27 @@ int ising::System::positive_modulo(int i, int n) {
 
 void ising::System::mc_update(int number_of_iterations) {
 	float energy = 0.0;
+	
+	ofstream file("temp.dat", ios::out | ios::app);
+
+	// file << "beta = " << _beta << endl;
+
 	for (unsigned i=0; i < number_of_iterations; i++) {
 
 		// if ((i % 10000) == 0)
 		// 	cout << "Step #" << i << endl;
 		
 		step();
-		// energy = energy + _current_lattice.get_energy();
+		energy = energy + _current_lattice.get_energy();
+
+		file << _beta << "\t" << i << "\t" << _current_lattice.get_energy() << endl;
+
+		// cout << _current_lattice.get_energy() << "\t";
 
 		// _current_lattice.set_energy(energy / (number_of_iterations * _width * _height));
 
 		// cout << "Got " << _current_lattice.get_energy() / (number_of_iterations * _width * _height) << endl;
-		_current_lattice.set_energy(_current_lattice.get_energy() / (number_of_iterations * _width * _height));
+		
 		// _current_lattice.set_energy(_current_lattice.get_energy());
 
 		// cout << _current_lattice << endl;
@@ -56,9 +65,11 @@ void ising::System::mc_update(int number_of_iterations) {
 		// cout << "Here it is " << _current_lattice.get_energy() << endl;
 	}
 
-	// cout << "Energy according to system is: " << (energy / number_of_iterations) << endl;
+	file << endl << endl; 
 
-	
+	cout << endl << "Energy according to system at temperature " << (1 / _beta) << " is: " << (energy / number_of_iterations) << endl;
+
+	_current_lattice.set_energy(_current_lattice.get_energy() / (number_of_iterations * _width * _height));
 
 	// cout << "==========================" << endl;
 }
@@ -80,6 +91,8 @@ void ising::System::step() {
 
 			// Calculate the total energy contribution by this vertex because of its interaction with its neighbors.
 			float energy = 2 * current_vertex.get_spin() * (lat.get_vertices()[positive_modulo(x + 1, _width)][y].get_spin() + lat.get_vertices()[positive_modulo(x - 1, _width)][y].get_spin() + lat.get_vertices()[x][positive_modulo(y + 1, _height)].get_spin() + lat.get_vertices()[x][positive_modulo(y - 1, _height)].get_spin());
+
+
 
 			// cout << "Old spin: " << lat.get_vertices()[x][y].get_spin() << endl;
 			// cout << current_vertex.get_spin() << endl;
